@@ -9,7 +9,7 @@ function playBGM() {
     var bgm = document.getElementById("bgm");
     if (bgm.paused) {
         bgm.play().then(() => {
-            console.log("BGMが再生されました");
+            console.log("BGMが再生UIPされました");
         }).catch((error) => {
             console.log("BGM再生に失敗しました: ", error);
         });
@@ -79,15 +79,15 @@ function displayQuestion() {
         });
     }, 100); // 100ミリ秒後にクリックを有効化
 
-    // タイマーを設定（1.5秒に変更）
+    // タイマーを設定（2秒に変更）
     if (timer) clearTimeout(timer);
     timer = setTimeout(function() {
         if (!questionAnswered) {
             questionAnswered = true;
-            console.log("1.5秒経過、次の問題へ");
+            console.log("2秒経過、次の問題へ");
             nextQuestion();
         }
-    }, 1500); // 制限時間1.5秒
+    }, 2000); // 制限時間2秒
 
     document.getElementById("question-text").innerText = "第" + questionNumber + "問（全10問）";
 }
