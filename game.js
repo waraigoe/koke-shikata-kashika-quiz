@@ -1,19 +1,19 @@
-var wrongAnswers = ["たけし", "ひとし", "ことし", "ここここ", "こけむし", "こけこっこ", "へっくし", "あっけし", "さくし", "こけ", "こし", "だがし", "こっこ", "こうし", "こいし", "こうか", "こうちし", "こくし", "こすい", "こむし", "こぐし", "こけおどし", "こころ"];
+var wrongAnswers = ["takeishi", "hitoshi", "kotoshi", "kokokoko", "koke mush", "kokekoko", "hekkushi", "akke shi", "sakushi", "koke", "koshi", "dagashi", "kokko", "koushi", "koishi", "kouka", "kouchi shi", "kokushi", "kosui", "komushi", "kogushi", "koke odoshi", "kokoro"];
 var questionNumber = 1;
 var score = 0;
 var questionAnswered = false;
 
-// BGMを再生する関数
+// Function to play BGM
 function playBGM() {
     var bgm = document.getElementById("bgm");
     bgm.play().then(() => {
-        console.log("BGMが再生されました");
+        console.log("BGM is playing");
     }).catch((error) => {
-        console.log("BGM再生に失敗しました: ", error);
+        console.log("Failed to play BGM: ", error);
     });
 }
 
-// 配列をシャッフルする関数（Fisher-Yatesシャッフル）
+// Function to shuffle an array
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -22,51 +22,62 @@ function shuffleArray(array) {
     return array;
 }
 
-// クイズの問題を表示する
+// Function to display the question
 function displayQuestion() {
     questionAnswered = false;
-    var wrongAnswer = wrongAnswers[Math.floor(Math.random() * wrongAnswers.length)];
-    document.getElementById("question-text").innerText = "第" + questionNumber + "問（全10問）";
-    document.getElementById("question-area").innerHTML = "";
-
-    // 「こけし」ボタン
+    // Select two random wrong answers
+    var wrongAnswersCopy = wrongAnswers.slice();
+    var wrongAnswer1 = wrongAnswersCopy.splice(Math.floor(Math.random() * wrongAnswersCopy.length), 1)[0];
+    var wrongAnswer2 = wrongAnswersCopy.splice(Math.floor(Math.random() * wrongAnswersCopy.length), 1)[0];
+    
+    // Create buttons
     var kokeshiButton = document.createElement("button");
-    kokeshiButton.innerHTML = "こけし";
-    kokeshiButton.onclick = function() {
-        if (!questionAnswered) {
-            score++;
-            questionAnswered = true;
-            clearTimeout(timer);
-            nextQuestion();
-        }
-    };
-
-    // 間違ったボタン
-    var wrongButton = document.createElement("button");
-    wrongButton.innerHTML = wrongAnswer;
-    wrongButton.onclick = function() {
-        if (!questionAnswered) {
-            questionAnswered = true;
-            clearTimeout(timer);
-            nextQuestion();
-        }
-    };
-
-    // ボタンをシャッフルして配置
-    var buttons = [kokeshiButton, wrongButton];
+    kokeshiButton.innerHTML = "kokeshi";
+    var wrongButton1 = document.createElement("button");
+    wrongButton1.innerHTML = wrongAnswer1;
+    var wrongButton2 = document.createElement("button");
+    wrongButton2.innerHTML = wrongAnswer2;
+    
+    // Put buttons in an array and shuffle
+    var buttons = [kokeshiButton, wrongButton1, wrongButton2];
     shuffleArray(buttons);
-    document.getElementById("question-area").appendChild(buttons[0]);
-    document.getElementById("question-area").appendChild(buttons[1]);
-
-    // 1秒後に次の問題へ
+    
+    // Append to question-area
+    document.getElementById("question-area").innerHTML = "";
+    for (var button of buttons) {
+        document.getElementById("question-area").appendChild(button);
+    }
+    
+    // Define click event
+    function handleButtonClick() {
+        if (!questionAnswered) {
+            if (this.innerHTML === "kokeshi") {
+                score++;
+            }
+            questionAnswered = true;
+            clearTimeout(timer);
+            nextQuestion();
+        }
+    }
+    
+    // Assign click event to all buttons
+    for (var button of buttons) {
+        button.onclick = handleButtonClick;
+    }
+    
+    // Set timer
     var timer = setTimeout(function() {
         if (!questionAnswered) {
             questionAnswered = true;
             nextQuestion();
         }
-    }, 1000); // 制限時間を1秒に設定
+    }, 1000);
+    
+    // Set question text
+    document.getElementById("question-text").innerText = "Question " + questionNumber + " of 10";
 }
 
+// Function to move to the next question
 function nextQuestion() {
     questionNumber++;
     if (questionNumber <= 10) {
@@ -76,14 +87,15 @@ function nextQuestion() {
     }
 }
 
+// Function to show the final score
 function showScore() {
-    document.getElementById("game-screen").innerHTML = "ゲーム終了！正解数: " + score + " / 10";
+    document.getElementById("game-screen").innerHTML = "Game over! You got " + score + " correct answers out of 10.";
 }
 
-// ゲーム開始ボタンを押したとき
+// Start button event listener
 document.getElementById("start-button").addEventListener("click", function() {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("game-screen").style.display = "block";
-    playBGM(); // BGMを再生
+    playBGM();
     displayQuestion();
 });
