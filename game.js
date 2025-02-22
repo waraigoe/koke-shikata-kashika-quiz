@@ -2,6 +2,7 @@ var wrongAnswers = ["たけし", "ひとし", "ことし", "ここここ", "こ�
 var questionNumber = 1;
 var score = 0;
 var questionAnswered = false;
+var timer = null; // タイマーをグローバルに管理
 
 // BGMを再生する関数
 function playBGM() {
@@ -25,7 +26,7 @@ function shuffleArray(array) {
 // クイズの問題を表示する
 function displayQuestion() {
     questionAnswered = false;
-    var wrongAnswersCopy = wrongAnswers.slice(); // 配列をコピー
+    var wrongAnswersCopy = wrongAnswers.slice();
     var wrongAnswer1 = wrongAnswersCopy.splice(Math.floor(Math.random() * wrongAnswersCopy.length), 1)[0];
     var wrongAnswer2 = wrongAnswersCopy.splice(Math.floor(Math.random() * wrongAnswersCopy.length), 1)[0];
 
@@ -55,16 +56,18 @@ function displayQuestion() {
                     score++;
                 }
                 questionAnswered = true;
-                clearTimeout(timer);
+                if (timer) clearTimeout(timer); // タイマーをクリア
                 nextQuestion();
             }
         };
     });
 
-    // 1秒後に次の問題へ
-    var timer = setTimeout(function() {
+    // タイマーを設定
+    if (timer) clearTimeout(timer); // 既存のタイマーをクリア
+    timer = setTimeout(function() {
         if (!questionAnswered) {
             questionAnswered = true;
+            console.log("1秒経過、次の問題へ");
             nextQuestion();
         }
     }, 1000); // 1秒に設定
@@ -85,10 +88,15 @@ function showScore() {
     document.getElementById("game-screen").innerHTML = "ゲーム終了！正解数: " + score + " / 10";
 }
 
+// ページ読み込み時にBGMを開始
+window.onload = function() {
+    playBGM();
+};
+
 // ゲーム開始ボタン
 document.getElementById("start-button").addEventListener("click", function() {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("game-screen").style.display = "block";
-    playBGM();
+    playBGM(); // 念のため再生状態を維持
     displayQuestion();
 });
