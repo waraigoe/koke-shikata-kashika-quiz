@@ -1,29 +1,27 @@
-// 間違った選択肢のリスト
-var wrongAnswers = ["たけし", "ひとし", "ことし", "こけこっこ", "へっくし"];
-var questionNumber = 1; // 今何問目か
-var score = 0; // 正解の数
-var questionAnswered = false; // 答えを選んだかどうか
+var wrongAnswers = ["たけし", "ひとし", "ことし", "ここここ", "こけむし", "こけこっこ", "へっくし", "あっけし", "さくし", "こけ", "こし", "だがし", "こっこ", "こうし", "こいし", "こうか", "こうちし", "こくし", "こすい", "こむし", "こぐし", "こけおどし", "こころ"];
+var questionNumber = 1;
+var score = 0;
+var questionAnswered = false;
 
-// クイズの問題を表示する
 function displayQuestion() {
     questionAnswered = false;
     var wrongAnswer = wrongAnswers[Math.floor(Math.random() * wrongAnswers.length)];
     document.getElementById("question-text").innerText = "第" + questionNumber + "問（全10問）";
     document.getElementById("question-area").innerHTML = "";
     
-    // 「こけし」ボタンを作る
+    // 「こけし」ボタン
     var kokeshiButton = document.createElement("button");
     kokeshiButton.innerHTML = "こけし";
     kokeshiButton.onclick = function() {
         if (!questionAnswered) {
-            score++; // 正解ならスコアを増やす
+            score++;
             questionAnswered = true;
             clearTimeout(timer);
             nextQuestion();
         }
     };
     
-    // 間違ったボタンを作る
+    // 間違ったボタン
     var wrongButton = document.createElement("button");
     wrongButton.innerHTML = wrongAnswer;
     wrongButton.onclick = function() {
@@ -34,43 +32,43 @@ function displayQuestion() {
         }
     };
     
-    // ボタンを画面に追加
-    document.getElementById("question-area").appendChild(kokeshiButton);
-    document.getElementById("question-area").appendChild(wrongButton);
+    // ランダムに左右を決める
+    var buttons = [kokeshiButton, wrongButton];
+    if (Math.random() < 0.5) {
+        buttons = [wrongButton, kokeshiButton]; // 50%の確率で順番を入れ替え
+    }
+    document.getElementById("question-area").appendChild(buttons[0]);
+    document.getElementById("question-area").appendChild(buttons[1]);
     
-    // 2秒後に次の問題へ
+    // 1.4秒後に次の問題へ
     var timer = setTimeout(function() {
         if (!questionAnswered) {
             questionAnswered = true;
             nextQuestion();
         }
-    }, 2000);
+    }, 1400); // 2秒から1.4秒に変更
 }
 
-// 次の問題へ進む
 function nextQuestion() {
     questionNumber++;
     if (questionNumber <= 10) {
         displayQuestion();
     } else {
-        showScore(); // 10問終わったら結果を表示
+        showScore();
     }
 }
 
-// スコアを表示
 function showScore() {
     document.getElementById("game-screen").innerHTML = "ゲーム終了！正解数: " + score + " / 10";
 }
 
-// ゲーム開始ボタンを押したとき
 document.getElementById("start-button").addEventListener("click", function() {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("game-screen").style.display = "block";
-    document.getElementById("bgm").play(); // BGMを再生
+    document.getElementById("bgm").play();
     displayQuestion();
 });
 
-// ページを開いたときにBGMをすぐ再生
 window.onload = function() {
     document.getElementById("bgm").play();
 };
