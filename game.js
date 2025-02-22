@@ -2,16 +2,18 @@ var wrongAnswers = ["たけし", "ひとし", "ことし", "ここここ", "こ�
 var questionNumber = 1;
 var score = 0;
 var questionAnswered = false;
-var timer = null; // タイマーをグローバルに管理
+var timer = null; // タイマーを管理
 
 // BGMを再生する関数
 function playBGM() {
     var bgm = document.getElementById("bgm");
-    bgm.play().then(() => {
-        console.log("BGMが再生されました");
-    }).catch((error) => {
-        console.log("BGM再生に失敗しました: ", error);
-    });
+    if (bgm.paused) {
+        bgm.play().then(() => {
+            console.log("BGMが再生されました");
+        }).catch((error) => {
+            console.log("BGM再生に失敗しました: ", error);
+        });
+    }
 }
 
 // 配列をシャッフルする関数
@@ -56,21 +58,21 @@ function displayQuestion() {
                     score++;
                 }
                 questionAnswered = true;
-                if (timer) clearTimeout(timer); // タイマーをクリア
+                if (timer) clearTimeout(timer);
                 nextQuestion();
             }
         };
     });
 
     // タイマーを設定
-    if (timer) clearTimeout(timer); // 既存のタイマーをクリア
+    if (timer) clearTimeout(timer);
     timer = setTimeout(function() {
         if (!questionAnswered) {
             questionAnswered = true;
             console.log("1秒経過、次の問題へ");
             nextQuestion();
         }
-    }, 1000); // 1秒に設定
+    }, 1000); // 制限時間1秒
 
     document.getElementById("question-text").innerText = "第" + questionNumber + "問（全10問）";
 }
@@ -97,6 +99,6 @@ window.onload = function() {
 document.getElementById("start-button").addEventListener("click", function() {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("game-screen").style.display = "block";
-    playBGM(); // 念のため再生状態を維持
+    playBGM(); // 再生状態を維持
     displayQuestion();
 });
