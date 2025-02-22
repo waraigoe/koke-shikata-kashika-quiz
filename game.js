@@ -1,19 +1,19 @@
-var wrongAnswers = ["takeishi", "hitoshi", "kotoshi", "kokokoko", "koke mush", "kokekoko", "hekkushi", "akke shi", "sakushi", "koke", "koshi", "dagashi", "kokko", "koushi", "koishi", "kouka", "kouchi shi", "kokushi", "kosui", "komushi", "kogushi", "koke odoshi", "kokoro"];
+var wrongAnswers = ["たけし", "ひとし", "ことし", "ここここ", "こけむし", "こけこっこ", "へっくし", "あっけし", "さくし", "こけ", "こし", "だがし", "こっこ", "こうし", "こいし", "こうか", "こうちし", "こくし", "こすい", "こむし", "こぐし", "こけおどし", "こころ"];
 var questionNumber = 1;
 var score = 0;
 var questionAnswered = false;
 
-// Function to play BGM
+// BGMを再生する関数
 function playBGM() {
     var bgm = document.getElementById("bgm");
     bgm.play().then(() => {
-        console.log("BGM is playing");
+        console.log("BGMが再生されました");
     }).catch((error) => {
-        console.log("Failed to play BGM: ", error);
+        console.log("BGM再生に失敗しました: ", error);
     });
 }
 
-// Function to shuffle an array
+// 配列をシャッフルする関数
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -22,62 +22,56 @@ function shuffleArray(array) {
     return array;
 }
 
-// Function to display the question
+// クイズの問題を表示する
 function displayQuestion() {
     questionAnswered = false;
-    // Select two random wrong answers
-    var wrongAnswersCopy = wrongAnswers.slice();
+    var wrongAnswersCopy = wrongAnswers.slice(); // 配列をコピー
     var wrongAnswer1 = wrongAnswersCopy.splice(Math.floor(Math.random() * wrongAnswersCopy.length), 1)[0];
     var wrongAnswer2 = wrongAnswersCopy.splice(Math.floor(Math.random() * wrongAnswersCopy.length), 1)[0];
-    
-    // Create buttons
+
+    // ボタンを作成
     var kokeshiButton = document.createElement("button");
-    kokeshiButton.innerHTML = "kokeshi";
+    kokeshiButton.innerHTML = "こけし";
     var wrongButton1 = document.createElement("button");
     wrongButton1.innerHTML = wrongAnswer1;
     var wrongButton2 = document.createElement("button");
     wrongButton2.innerHTML = wrongAnswer2;
-    
-    // Put buttons in an array and shuffle
+
+    // ボタンをシャッフル
     var buttons = [kokeshiButton, wrongButton1, wrongButton2];
     shuffleArray(buttons);
-    
-    // Append to question-area
+
+    // ボタンを追加
     document.getElementById("question-area").innerHTML = "";
-    for (var button of buttons) {
+    buttons.forEach(button => {
         document.getElementById("question-area").appendChild(button);
-    }
-    
-    // Define click event
-    function handleButtonClick() {
-        if (!questionAnswered) {
-            if (this.innerHTML === "kokeshi") {
-                score++;
+    });
+
+    // クリックイベントを追加
+    buttons.forEach(button => {
+        button.onclick = function() {
+            if (!questionAnswered) {
+                if (this.innerHTML === "こけし") {
+                    score++;
+                }
+                questionAnswered = true;
+                clearTimeout(timer);
+                nextQuestion();
             }
-            questionAnswered = true;
-            clearTimeout(timer);
-            nextQuestion();
-        }
-    }
-    
-    // Assign click event to all buttons
-    for (var button of buttons) {
-        button.onclick = handleButtonClick;
-    }
-    
-    // Set timer
+        };
+    });
+
+    // 1秒後に次の問題へ
     var timer = setTimeout(function() {
         if (!questionAnswered) {
             questionAnswered = true;
             nextQuestion();
         }
-    }, 1000);
-    
-    // Set question text
-    document.getElementById("question-text").innerText = "Question " + questionNumber + " of 10";
+    }, 1000); // 1秒に設定
+
+    document.getElementById("question-text").innerText = "第" + questionNumber + "問（全10問）";
 }
 
-// Function to move to the next question
 function nextQuestion() {
     questionNumber++;
     if (questionNumber <= 10) {
@@ -87,12 +81,11 @@ function nextQuestion() {
     }
 }
 
-// Function to show the final score
 function showScore() {
-    document.getElementById("game-screen").innerHTML = "Game over! You got " + score + " correct answers out of 10.";
+    document.getElementById("game-screen").innerHTML = "ゲーム終了！正解数: " + score + " / 10";
 }
 
-// Start button event listener
+// ゲーム開始ボタン
 document.getElementById("start-button").addEventListener("click", function() {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("game-screen").style.display = "block";
