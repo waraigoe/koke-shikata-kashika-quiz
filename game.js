@@ -64,15 +64,15 @@ function displayQuestion() {
         };
     });
 
-    // タイマーを設定
+    // タイマーを設定（1.5秒に変更）
     if (timer) clearTimeout(timer);
     timer = setTimeout(function() {
         if (!questionAnswered) {
             questionAnswered = true;
-            console.log("1秒経過、次の問題へ");
+            console.log("1.5秒経過、次の問題へ");
             nextQuestion();
         }
-    }, 1000); // 制限時間1秒
+    }, 1500); // 制限時間1.5秒
 
     document.getElementById("question-text").innerText = "第" + questionNumber + "問（全10問）";
 }
@@ -91,14 +91,3 @@ function showScore() {
 }
 
 // ページ読み込み時にBGMを開始
-window.onload = function() {
-    playBGM();
-};
-
-// ゲーム開始ボタン
-document.getElementById("start-button").addEventListener("click", function() {
-    document.getElementById("start-screen").style.display = "none";
-    document.getElementById("game-screen").style.display = "block";
-    playBGM(); // 再生状態を維持
-    displayQuestion();
-});
