@@ -25,6 +25,16 @@ function shuffleArray(array) {
     return array;
 }
 
+// ランダムな色を生成する関数
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
 // クイズの問題を表示する
 function displayQuestion() {
     questionAnswered = false;
@@ -35,10 +45,13 @@ function displayQuestion() {
     // ボタンを作成
     var kokeshiButton = document.createElement("button");
     kokeshiButton.innerHTML = "こけし";
+    kokeshiButton.style.backgroundColor = getRandomColor(); // ランダムな背景色
     var wrongButton1 = document.createElement("button");
     wrongButton1.innerHTML = wrongAnswer1;
+    wrongButton1.style.backgroundColor = getRandomColor(); // ランダムな背景色
     var wrongButton2 = document.createElement("button");
     wrongButton2.innerHTML = wrongAnswer2;
+    wrongButton2.style.backgroundColor = getRandomColor(); // ランダムな背景色
 
     // ボタンをシャッフル
     var buttons = [kokeshiButton, wrongButton1, wrongButton2];
@@ -50,19 +63,21 @@ function displayQuestion() {
         document.getElementById("question-area").appendChild(button);
     });
 
-    // クリックイベントを追加
-    buttons.forEach(button => {
-        button.onclick = function() {
-            if (!questionAnswered) {
-                if (this.innerHTML === "こけし") {
-                    score++;
+    // クリックイベントを追加（遅延後に有効化）
+    setTimeout(function() {
+        buttons.forEach(button => {
+            button.onclick = function() {
+                if (!questionAnswered) {
+                    if (this.innerHTML === "こけし") {
+                        score++;
+                    }
+                    questionAnswered = true;
+                    if (timer) clearTimeout(timer);
+                    nextQuestion();
                 }
-                questionAnswered = true;
-                if (timer) clearTimeout(timer);
-                nextQuestion();
-            }
-        };
-    });
+            };
+        });
+    }, 100); // 100ミリ秒後にクリックを有効化
 
     // タイマーを設定（1.5秒に変更）
     if (timer) clearTimeout(timer);
@@ -91,3 +106,14 @@ function showScore() {
 }
 
 // ページ読み込み時にBGMを開始
+window.onload = function() {
+    playBGM();
+};
+
+// ゲーム開始ボタン
+document.getElementById("start-button").addEventListener("click", function() {
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("game-screen").style.display = "block";
+    playBGM(); // 再生状態を維持
+    displayQuestion();
+});
